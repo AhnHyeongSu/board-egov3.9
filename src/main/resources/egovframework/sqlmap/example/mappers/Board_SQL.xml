@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.board.service.impl.BoardMapper">
+
+	<resultMap id="board" type="egovframework.example.board.service.BoardVO">
+		<result property="boardNum" column="board_num"/>
+		<result property="userId" column="user_id"/>
+		<result property="boardTitle" column="board_title"/>
+		<result property="boardContent" column="board_content"/>
+		<result property="boardDate" column="board_date"/>
+		<result property="boardPwd" column="board_pwd"/>
+	</resultMap>
+	
+	<!-- cdata 는 특수문자 쓸때 사용 -->
+	<!-- 페이징된 게시글 조회 -->
+	<select id="boardList" resultMap="board" parameterType="java.util.List">
+        <![CDATA[
+            SELECT * 
+            FROM board
+            ORDER BY board_num DESC
+            LIMIT #{pageStart}, #{perPageNum}
+        ]]>
+	</select>
+	
+	<!-- 전체 게시글 수 조회 -->
+	<select id="boardListCnt" resultType="int">
+		<![CDATA[		
+        	SELECT count(*)
+        	FROM board
+		]]>
+	</select>
+	
+	<!-- 게시글 보기 -->
+	<select id="boardView" resultMap="board" parameterType="int">
+		<![CDATA[
+			SELECT *
+			FROM board
+			WHERE board_num = #{boardNum}
+		]]>
+	</select>
+	
+	<!-- 게시글 등록 -->
+	<insert id="addBoard" parameterType="boardVO">
+		<![CDATA[
+		INSERT INTO board (user_id, board_title, board_content, board_pwd) VALUES
+		(#{userId}, #{boardTitle}, #{boardContent}, #{boardPwd})		
+		]]>
+	</insert>
+	
+	<!-- 암호체크 전 체크 -->
+	<select id="pwdConfirm" resultType="String" parameterType="int">
+		<![CDATA[
+			SELECT board_pwd
+			FORM board
+			WHERE board_num = #{num}
+		]]>
+	</select>
+	
+	<!-- 암호체크 -->
+	<select id="pwdCheck" resultType="int" parameterType="java.util.Map">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM board
+			WHERE board_num = #{boardNum} AND board_pwd = #{checkPwd} 
+		]]>
+	</select>
+	<!-- 수정 -->
+	<update id="updateBoard" parameterType="boardVO">
+		UPDATE board 
+		SET 
+		board_title = #{boardTitle}, board_content = #{boardContent}
+		WHERE board_num = #{boardNum}
+	</update>
+	
+	<!-- 삭제 -->
+	<delete id="deleteBoard" parameterType="boardVO">
+		DELETE FROM board
+		WHERE board_num = #{boardNum}
+	</delete>
+
+	<!-- <select id="boardList" resultMap="board">
+		SELECT *
+		FROM board
+		ORDER BY board_num DESC
+	</select> -->
+	
+	<!-- <insert id="insertSample" parameterType="SampleVO">
+
+			INSERT INTO SAMPLE
+				( ID
+				  , NAME
+				  , DESCRIPTION
+				  , USE_YN
+				  , REG_USER )
+			VALUES ( #{id}
+				  , #{name}
+				  , #{description}
+				  , #{useYn}
+				  , #{regUser} )
+
+	</insert>
+
+	<update id="updateSample">
+
+			UPDATE SAMPLE
+			SET ID=#{id}
+				, NAME=#{name}
+				, DESCRIPTION=#{description}
+				, USE_YN=#{useYn}
+				  WHERE ID=#{id}
+
+	</update>
+
+	<delete id="deleteSample">
+
+			DELETE FROM SAMPLE
+			WHERE ID=#{id}
+
+	</delete>
+
+	<select id="selectSample" resultMap="sample">
+
+			SELECT
+				ID, NAME, DESCRIPTION, USE_YN, REG_USER
+			FROM SAMPLE
+			WHERE ID=#{id}
+
+	</select>
+
+	<select id="selectSampleList" parameterType="searchVO" resultType="egovMap">
+
+			SELECT
+				ID, NAME, DESCRIPTION, USE_YN, REG_USER
+			FROM SAMPLE
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchCondition == 0">
+						AND	ID LIKE '%' || #{searchKeyword} || '%'
+					</when>
+		            <when test="searchCondition == 1">
+						AND	NAME LIKE '%' || #{searchKeyword} || '%'
+					</when>
+				</choose>
+			</if>
+			ORDER BY ID ASC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+
+	<select id="selectSampleListTotCnt" parameterType="searchVO" resultType="int">
+
+			SELECT COUNT(*) totcnt
+			FROM SAMPLE
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+		        <choose>
+		            <when test="searchCondition == 0">
+						AND ID LIKE '%' || #{searchKeyword} || '%'
+					</when>
+		            <when test="searchCondition == 1">
+						AND	NAME LIKE '%' || #{searchKeyword} || '%'
+					</when>
+				</choose>
+			</if>
+	</select> -->
+
+</mapper>
